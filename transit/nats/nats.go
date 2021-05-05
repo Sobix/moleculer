@@ -37,7 +37,12 @@ type NATSOptions struct {
 func natsOptions(options NATSOptions) *nats.Options {
 	opts := nats.GetDefaultOptions()
 	opts.Name = options.Name
-	opts.Url = options.URL
+	splicedUrls := strings.Split(options.URL, ", ")
+	if len(splicedUrls) > 1 {
+		opts.Servers = splicedUrls
+	} else {
+		opts.Url = options.URL
+	}
 	opts.AllowReconnect = options.AllowReconnect
 	if options.ReconnectWait != 0 {
 		opts.ReconnectWait = options.ReconnectWait

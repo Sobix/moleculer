@@ -3,6 +3,7 @@ package moleculer
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	bus "github.com/moleculer-go/goemitter"
@@ -116,11 +117,23 @@ type Mixin struct {
 type TransporterFactoryFunc func() interface{}
 type StrategyFactoryFunc func() interface{}
 
+type TransporterOptions struct {
+	Urls []string
+	User string
+	Pass string
+}
+
+type TransporterConfig struct {
+	Type    string
+	Options TransporterOptions
+}
+
 type Config struct {
 	LogLevel                   string
 	LogFormat                  string
 	DiscoverNodeID             func() string
 	Transporter                string
+	TransporterConfig          *TransporterConfig
 	TransporterFactory         TransporterFactoryFunc
 	StrategyFactory            StrategyFactoryFunc
 	HeartbeatFrequency         time.Duration
@@ -146,6 +159,29 @@ type Config struct {
 	Stopped                    func()
 
 	Services map[string]interface{}
+}
+
+func (config Config) GetTransporter() string {
+	if config.TransporterConfig != nil {
+		return config.mapTransporterConfig()
+	}
+
+	return config.Transporter
+}
+
+func (config Config) mapTransporterConfig() string {
+	transporter := ""
+	creditsString := config.TransporterConfig.Options.User + ":" + config.TransporterConfig.Options.Pass
+	for _, url := range config.TransporterConfig.Options.Urls {
+		if creditsString != "" {
+			splicedUrls := strings.Split(url, "//")
+			url = splicedUrls[0] + "//" + creditsString + "@" + splicedUrls[1]
+		}
+
+		transporter += url + ", "
+	}
+
+	return strings.Trim(transporter, ", ")
 }
 
 var DefaultConfig = Config{

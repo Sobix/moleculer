@@ -45,8 +45,8 @@ func mergeConfigs(baseConfig moleculer.Config, userConfig []*moleculer.Config) m
 			if config.DiscoverNodeID != nil {
 				baseConfig.DiscoverNodeID = config.DiscoverNodeID
 			}
-			if config.Transporter != "" {
-				baseConfig.Transporter = config.Transporter
+			if config.Transporter != "" || config.TransporterConfig != nil {
+				baseConfig.Transporter = config.GetTransporter()
 			}
 			if config.TransporterFactory != nil {
 				baseConfig.TransporterFactory = config.TransporterFactory

@@ -234,7 +234,7 @@ func (context *Context) AsMap() map[string]interface{} {
 		mapResult["data"] = context.params.Value()
 		mapResult["meta"] = context.meta.RawMap()
 	}
-
+	mapResult["tracing"] = false
 	//TODO : check how to support streaming params in go
 	mapResult["stream"] = false
 
