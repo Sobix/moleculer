@@ -210,7 +210,7 @@ func (broker *ServiceBroker) waitForDependencies(service *service.Service) {
 	}
 }
 
-func (broker *ServiceBroker) broadcastLocal(eventName string, params ...interface{}) {
+func (broker *ServiceBroker) BroadcastLocal(eventName string, params ...interface{}) {
 	broker.LocalBus().EmitAsync(eventName, params)
 }
 
@@ -391,7 +391,7 @@ func (broker *ServiceBroker) Start() {
 
 	broker.logger.Debug("Broker -> registry started!")
 
-	defer broker.broadcastLocal("$broker.started")
+	defer broker.BroadcastLocal("$broker.started")
 	defer broker.middlewares.CallHandlers("brokerStarted", broker.delegates)
 
 	broker.started = true
@@ -415,7 +415,7 @@ func (broker *ServiceBroker) Stop() {
 	broker.registry.Stop()
 
 	broker.started = false
-	broker.broadcastLocal("$broker.stopped")
+	broker.BroadcastLocal("$broker.stopped")
 
 	broker.middlewares.CallHandlers("brokerStopped", broker.delegates)
 }
