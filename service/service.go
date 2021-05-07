@@ -200,6 +200,10 @@ func mergeDependencies(service moleculer.ServiceSchema, mixin *moleculer.Mixin) 
 }
 
 func concatenateEvents(service moleculer.ServiceSchema, mixin *moleculer.Mixin) moleculer.ServiceSchema {
+	if service.Events == nil || len(service.Events) == 0 {
+		service.Events = mixin.Events
+		return service
+	}
 	for _, mixinEvent := range mixin.Events {
 		for _, serviceEvent := range service.Events {
 			if serviceEvent.Name != mixinEvent.Name {
